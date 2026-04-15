@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamWorld Overlay Builder</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+  <script src="templates.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body class="builder-page">
+  <header class="app-topbar">
+    <div>
+      <strong>StreamWorld Studio</strong>
+      <span>Overlay editor</span>
+    </div>
+    <div class="topbar-actions">
+      <span class="resolution-pill">1920 x 1080</span>
+      <a href="overlay.html" target="_blank" rel="noreferrer">Open Overlay</a>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="controls-panel" aria-labelledby="builderTitle">
+      <p class="eyebrow">StreamWorld</p>
+      <h1 id="builderTitle">Template Library</h1>
+      <p class="intro">Choose a complete overlay pack, customize the name and color, then copy one browser-source URL into OBS.</p>
+
+      <label class="field-label" for="nameInputBox">Streamer Name</label>
+      <input id="nameInputBox" class="text-input" type="text" value="Ashay" maxlength="32">
+
+      <label class="field-label" for="colorPickerInput">Accent Color</label>
+      <div class="color-row">
+        <input id="colorPickerInput" class="color-input" type="color" value="#00ffcc">
+        <span id="colorValueText">#00ffcc</span>
+      </div>
+
+      <div class="preset-section">
+        <div class="section-heading-row">
+          <p class="field-label">Premade Templates</p>
+          <span id="templateCountText">50 packs</span>
+        </div>
+        <select id="presetSelect" class="preset-select" aria-label="Choose overlay template"></select>
+        <div id="selectedPresetPreview" class="selected-preset-preview" aria-live="polite"></div>
+      </div>
+
+      <div class="toggle-group" aria-label="Overlay options">
+        <p class="field-label">Overlay Widgets</p>
+        <label class="toggle-row">
+          <input id="transparentToggleSwitch" type="checkbox" checked>
+          <span>Transparent background</span>
+        </label>
+        <label class="toggle-row">
+          <input id="webcamToggleSwitch" type="checkbox" checked>
+          <span>Show webcam frame</span>
+        </label>
+        <label class="toggle-row">
+          <input id="topBarToggleSwitch" type="checkbox" checked>
+          <span>Show top bar</span>
+        </label>
+        <label class="toggle-row">
+          <input id="followerToggleSwitch" type="checkbox" checked>
+          <span>Show recent follower box</span>
+        </label>
+        <label class="toggle-row">
+          <input id="alertToggleSwitch" type="checkbox" checked>
+          <span>Show alert box</span>
+        </label>
+        <label class="toggle-row">
+          <input id="chatToggleSwitch" type="checkbox" checked>
+          <span>Show chat box</span>
+        </label>
+        <label class="toggle-row">
+          <input id="goalToggleSwitch" type="checkbox" checked>
+          <span>Show goal bar</span>
+        </label>
+      </div>
+
+      <div class="button-row">
+        <button id="downloadButton" class="primary-button" type="button">Download PNG</button>
+        <button id="obsLinkButton" class="secondary-button" type="button">Get OBS Link</button>
+      </div>
+      <button id="resetLayoutButton" class="ghost-button" type="button">Reset widget positions</button>
+
+      <div class="obs-output" aria-live="polite">
+        <p>OBS URL</p>
+        <a id="obsLinkOutput" href="overlay.html" target="_blank" rel="noreferrer">Click “Get OBS Link”</a>
+      </div>
+    </section>
+
+    <section class="preview-panel" aria-labelledby="previewTitle">
+      <div class="preview-heading">
+        <div>
+          <p class="eyebrow">Live Preview</p>
+          <h2 id="previewTitle">1920 x 1080 Overlay</h2>
+        </div>
+        <p class="preview-note">Use this URL in OBS as a Browser Source.</p>
+      </div>
+
+      <div id="previewStage" class="preview-stage">
+        <div id="previewViewport" class="preview-viewport">
+          <div id="overlayPreview" class="overlay-container preview-scale preset-cyber-grid">
+            <div id="topBarBox" class="top-bar draggable-widget" data-widget-key="topbar">
+              <span id="overlayNameText" class="streamer-name">Ashay</span>
+              <span class="top-bar-tag">Live Now</span>
+            </div>
+
+            <div id="webcamFrameBox" class="webcam-frame draggable-widget" data-widget-key="webcam">
+              <span>Webcam</span>
+            </div>
+
+            <div id="recentFollowerBox" class="recent-follower draggable-widget" data-widget-key="follower">
+              <span class="box-label">Recent Follower</span>
+              <strong>pixelpilot</strong>
+            </div>
+
+            <div id="alertBox" class="alert-box draggable-widget" data-widget-key="alert">
+              <span class="alert-icon">★</span>
+              <div>
+                <span class="box-label">New Follower</span>
+                <strong>streamfan42 joined</strong>
+              </div>
+            </div>
+
+            <div id="chatBox" class="chat-box draggable-widget" data-widget-key="chat">
+              <span class="box-label">Live Chat</span>
+              <p><strong>nova:</strong> clean overlay!</p>
+              <p><strong>mira:</strong> ready for ranked?</p>
+              <p><strong>jax:</strong> good luck today</p>
+            </div>
+
+            <div id="goalBox" class="goal-box draggable-widget" data-widget-key="goal">
+              <div class="goal-topline">
+                <span class="box-label">Follower Goal</span>
+                <strong>68 / 100</strong>
+              </div>
+              <div class="goal-track">
+                <span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

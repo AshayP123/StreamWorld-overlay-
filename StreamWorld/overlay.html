@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamWorld OBS Overlay</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="templates.js" defer></script>
+  <script src="overlay.js" defer></script>
+</head>
+<body class="overlay-page">
+  <div id="overlayPreview" class="overlay-container preset-cyber-grid">
+    <div id="topBarBox" class="top-bar draggable-widget" data-widget-key="topbar">
+      <span id="overlayNameText" class="streamer-name">Streamer</span>
+      <span class="top-bar-tag">Live Now</span>
+    </div>
+
+    <div id="webcamFrameBox" class="webcam-frame draggable-widget" data-widget-key="webcam">
+      <span>Webcam</span>
+    </div>
+
+    <div id="recentFollowerBox" class="recent-follower draggable-widget" data-widget-key="follower">
+      <span class="box-label">Recent Follower</span>
+      <strong>pixelpilot</strong>
+    </div>
+
+    <div id="alertBox" class="alert-box draggable-widget" data-widget-key="alert">
+      <span class="alert-icon">★</span>
+      <div>
+        <span class="box-label">New Follower</span>
+        <strong>streamfan42 joined</strong>
+      </div>
+    </div>
+
+    <div id="chatBox" class="chat-box draggable-widget" data-widget-key="chat">
+      <span class="box-label">Live Chat</span>
+      <p><strong>nova:</strong> clean overlay!</p>
+      <p><strong>mira:</strong> ready for ranked?</p>
+      <p><strong>jax:</strong> good luck today</p>
+    </div>
+
+    <div id="goalBox" class="goal-box draggable-widget" data-widget-key="goal">
+      <div class="goal-topline">
+        <span class="box-label">Follower Goal</span>
+        <strong>68 / 100</strong>
+      </div>
+      <div class="goal-track">
+        <span></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
