@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
   <script src="templates.js" defer></script>
+  <script src="live.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body class="builder-page">
@@ -29,6 +30,9 @@
 
       <label class="field-label" for="nameInputBox">Streamer Name</label>
       <input id="nameInputBox" class="text-input" type="text" value="Ashay" maxlength="32">
+
+      <label class="field-label" for="channelInputBox">Twitch Channel</label>
+      <input id="channelInputBox" class="text-input" type="text" value="ashay" maxlength="32" placeholder="your Twitch channel">
 
       <label class="field-label" for="colorPickerInput">Accent Color</label>
       <div class="color-row">
@@ -77,6 +81,32 @@
         </label>
       </div>
 
+      <div class="live-tools" aria-label="Live widget controls">
+        <p class="field-label">Live Widgets</p>
+        <button id="connectChatButton" class="ghost-button" type="button">Connect Twitch chat</button>
+        <p id="chatStatusText" class="helper-text">Chat uses the Twitch channel above.</p>
+
+        <button id="enableWebcamButton" class="ghost-button" type="button">Enable webcam preview</button>
+        <label class="toggle-row">
+          <input id="webcamLiveToggleSwitch" type="checkbox">
+          <span>Include webcam request in OBS URL</span>
+        </label>
+        <p id="webcamStatusText" class="helper-text">OBS may ask for camera permission. Most streamers still use OBS Video Capture for the actual camera.</p>
+      </div>
+
+      <div class="manual-widgets" aria-label="Manual widget data">
+        <p class="field-label">Follower + Goal Text</p>
+        <label class="mini-label" for="recentFollowerInputBox">Recent follower</label>
+        <input id="recentFollowerInputBox" class="text-input" type="text" value="pixelpilot" maxlength="24">
+        <div class="goal-input-row">
+          <label class="mini-label" for="goalCurrentInputBox">Goal</label>
+          <input id="goalCurrentInputBox" class="text-input" type="number" min="0" value="68">
+          <span>/</span>
+          <input id="goalTargetInputBox" class="text-input" type="number" min="1" value="100">
+        </div>
+        <p class="helper-text">Real follower alerts need a Twitch/StreamElements/Streamlabs API connection with private tokens.</p>
+      </div>
+
       <div class="button-row">
         <button id="downloadButton" class="primary-button" type="button">Download PNG</button>
         <button id="obsLinkButton" class="secondary-button" type="button">Get OBS Link</button>
@@ -107,12 +137,13 @@
             </div>
 
             <div id="webcamFrameBox" class="webcam-frame draggable-widget" data-widget-key="webcam">
-              <span>Webcam</span>
+              <video id="webcamVideo" muted autoplay playsinline></video>
+              <span id="webcamPlaceholderText">Webcam</span>
             </div>
 
             <div id="recentFollowerBox" class="recent-follower draggable-widget" data-widget-key="follower">
               <span class="box-label">Recent Follower</span>
-              <strong>pixelpilot</strong>
+              <strong id="recentFollowerNameText">pixelpilot</strong>
             </div>
 
             <div id="alertBox" class="alert-box draggable-widget" data-widget-key="alert">
@@ -125,18 +156,20 @@
 
             <div id="chatBox" class="chat-box draggable-widget" data-widget-key="chat">
               <span class="box-label">Live Chat</span>
-              <p><strong>nova:</strong> clean overlay!</p>
-              <p><strong>mira:</strong> ready for ranked?</p>
-              <p><strong>jax:</strong> good luck today</p>
+              <div id="chatMessages" class="chat-messages">
+                <p><strong>nova:</strong> clean overlay!</p>
+                <p><strong>mira:</strong> ready for ranked?</p>
+                <p><strong>jax:</strong> good luck today</p>
+              </div>
             </div>
 
             <div id="goalBox" class="goal-box draggable-widget" data-widget-key="goal">
               <div class="goal-topline">
                 <span class="box-label">Follower Goal</span>
-                <strong>68 / 100</strong>
+                <strong id="goalCountText">68 / 100</strong>
               </div>
               <div class="goal-track">
-                <span></span>
+                <span id="goalProgressFill"></span>
               </div>
             </div>
           </div>

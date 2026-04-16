@@ -1,4 +1,5 @@
 const nameInputBox = document.getElementById("nameInputBox");
+const channelInputBox = document.getElementById("channelInputBox");
 const colorPickerInput = document.getElementById("colorPickerInput");
 const transparentToggleSwitch = document.getElementById("transparentToggleSwitch");
 const webcamToggleSwitch = document.getElementById("webcamToggleSwitch");
@@ -7,6 +8,7 @@ const followerToggleSwitch = document.getElementById("followerToggleSwitch");
 const alertToggleSwitch = document.getElementById("alertToggleSwitch");
 const chatToggleSwitch = document.getElementById("chatToggleSwitch");
 const goalToggleSwitch = document.getElementById("goalToggleSwitch");
+const webcamLiveToggleSwitch = document.getElementById("webcamLiveToggleSwitch");
 const presetSelect = document.getElementById("presetSelect");
 const templateCountText = document.getElementById("templateCountText");
 const selectedPresetPreview = document.getElementById("selectedPresetPreview");
@@ -17,15 +19,28 @@ const overlayPreview = document.getElementById("overlayPreview");
 const overlayNameText = document.getElementById("overlayNameText");
 const colorValueText = document.getElementById("colorValueText");
 const webcamFrameBox = document.getElementById("webcamFrameBox");
+const webcamVideo = document.getElementById("webcamVideo");
+const webcamPlaceholderText = document.getElementById("webcamPlaceholderText");
 const topBarBox = document.getElementById("topBarBox");
 const recentFollowerBox = document.getElementById("recentFollowerBox");
+const recentFollowerNameText = document.getElementById("recentFollowerNameText");
 const alertBox = document.getElementById("alertBox");
 const chatBox = document.getElementById("chatBox");
+const chatMessages = document.getElementById("chatMessages");
 const goalBox = document.getElementById("goalBox");
+const goalCountText = document.getElementById("goalCountText");
+const goalProgressFill = document.getElementById("goalProgressFill");
 const downloadButton = document.getElementById("downloadButton");
 const obsLinkButton = document.getElementById("obsLinkButton");
 const obsLinkOutput = document.getElementById("obsLinkOutput");
 const resetLayoutButton = document.getElementById("resetLayoutButton");
+const connectChatButton = document.getElementById("connectChatButton");
+const enableWebcamButton = document.getElementById("enableWebcamButton");
+const chatStatusText = document.getElementById("chatStatusText");
+const webcamStatusText = document.getElementById("webcamStatusText");
+const recentFollowerInputBox = document.getElementById("recentFollowerInputBox");
+const goalCurrentInputBox = document.getElementById("goalCurrentInputBox");
+const goalTargetInputBox = document.getElementById("goalTargetInputBox");
 const draggableWidgets = document.querySelectorAll(".draggable-widget");
 
 const presetSettings = STREAMWORLD_TEMPLATES.reduce(function(settings, template) {
@@ -39,6 +54,7 @@ const presetClasses = STREAMWORLD_TEMPLATES.map(function(template) {
 let currentPreset = STREAMWORLD_TEMPLATES[0].id;
 let widgetPositions = {};
 let activeDrag = null;
+let twitchChatSocket = null;
 
 function fitPreviewToStage() {
   const stageRect = previewStage.getBoundingClientRect();
@@ -65,6 +81,19 @@ function renderPresetCards() {
 
 function updateName() {
   overlayNameText.textContent = nameInputBox.value.trim() || "Streamer";
+}
+
+function updateFollowerText() {
+  recentFollowerNameText.textContent = recentFollowerInputBox.value.trim() || "latestfan";
+}
+
+function updateGoalText() {
+  const currentValue = Math.max(Number(goalCurrentInputBox.value) || 0, 0);
+  const targetValue = Math.max(Number(goalTargetInputBox.value) || 1, 1);
+  const percent = Math.min(Math.round((currentValue / targetValue) * 100), 100);
+
+  goalCountText.textContent = `${currentValue} / ${targetValue}`;
+  goalProgressFill.style.width = `${percent}%`;
 }
 
 function updateColor() {
@@ -270,15 +299,20 @@ function buildOverlayURL() {
   const overlayURL = new URL("overlay.html", window.location.href);
 
   overlayURL.searchParams.set("name", nameInputBox.value.trim() || "Streamer");
+  overlayURL.searchParams.set("channel", cleanChannelName(channelInputBox.value));
   overlayURL.searchParams.set("color", colorPickerInput.value);
   overlayURL.searchParams.set("preset", currentPreset);
   overlayURL.searchParams.set("transparent", transparentToggleSwitch.checked);
   overlayURL.searchParams.set("webcam", webcamToggleSwitch.checked);
+  overlayURL.searchParams.set("liveWebcam", webcamLiveToggleSwitch.checked);
   overlayURL.searchParams.set("topbar", topBarToggleSwitch.checked);
   overlayURL.searchParams.set("follower", followerToggleSwitch.checked);
+  overlayURL.searchParams.set("followerName", recentFollowerInputBox.value.trim() || "latestfan");
   overlayURL.searchParams.set("alert", alertToggleSwitch.checked);
   overlayURL.searchParams.set("chat", chatToggleSwitch.checked);
   overlayURL.searchParams.set("goal", goalToggleSwitch.checked);
+  overlayURL.searchParams.set("goalCurrent", Math.max(Number(goalCurrentInputBox.value) || 0, 0));
+  overlayURL.searchParams.set("goalTarget", Math.max(Number(goalTargetInputBox.value) || 1, 1));
 
   Object.keys(widgetPositions).forEach(function(widgetKey) {
     overlayURL.searchParams.set(`${widgetKey}X`, widgetPositions[widgetKey].x);
@@ -286,6 +320,29 @@ function buildOverlayURL() {
   });
 
   return overlayURL;
+}
+
+function connectLiveChat() {
+  if (twitchChatSocket) {
+    twitchChatSocket.close();
+    twitchChatSocket = null;
+  }
+
+  twitchChatSocket = connectTwitchChat({
+    channelName: channelInputBox.value,
+    chatMessagesElement: chatMessages,
+    statusElement: chatStatusText
+  });
+
+  generateOBSLink();
+}
+
+function enableLiveWebcam() {
+  enableWebcamPreview({
+    videoElement: webcamVideo,
+    placeholderElement: webcamPlaceholderText,
+    statusElement: webcamStatusText
+  });
 }
 
 function generateOBSLink() {
@@ -324,20 +381,36 @@ async function downloadPreview() {
 }
 
 nameInputBox.addEventListener("input", updateName);
+channelInputBox.addEventListener("input", generateOBSLink);
 colorPickerInput.addEventListener("input", updateColor);
 transparentToggleSwitch.addEventListener("change", updateVisibility);
 webcamToggleSwitch.addEventListener("change", updateVisibility);
+webcamLiveToggleSwitch.addEventListener("change", generateOBSLink);
 topBarToggleSwitch.addEventListener("change", updateVisibility);
 followerToggleSwitch.addEventListener("change", updateVisibility);
 alertToggleSwitch.addEventListener("change", updateVisibility);
 chatToggleSwitch.addEventListener("change", updateVisibility);
 goalToggleSwitch.addEventListener("change", updateVisibility);
+recentFollowerInputBox.addEventListener("input", function() {
+  updateFollowerText();
+  generateOBSLink();
+});
+goalCurrentInputBox.addEventListener("input", function() {
+  updateGoalText();
+  generateOBSLink();
+});
+goalTargetInputBox.addEventListener("input", function() {
+  updateGoalText();
+  generateOBSLink();
+});
 presetSelect.addEventListener("change", function() {
   applyPreset(presetSelect.value);
 });
 obsLinkButton.addEventListener("click", generateOBSLink);
 downloadButton.addEventListener("click", downloadPreview);
 resetLayoutButton.addEventListener("click", resetWidgetPositions);
+connectChatButton.addEventListener("click", connectLiveChat);
+enableWebcamButton.addEventListener("click", enableLiveWebcam);
 draggableWidgets.forEach(function(widget) {
   widget.addEventListener("pointerdown", startWidgetDrag);
   widget.addEventListener("pointermove", moveWidgetDrag);
@@ -347,6 +420,8 @@ draggableWidgets.forEach(function(widget) {
 window.addEventListener("resize", fitPreviewToStage);
 
 updateName();
+updateFollowerText();
+updateGoalText();
 renderPresetCards();
 applyPreset(currentPreset);
 fitPreviewToStage();

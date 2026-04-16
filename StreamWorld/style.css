@@ -28,6 +28,10 @@ input {
   font: inherit;
 }
 
+select {
+  font: inherit;
+}
+
 .builder-page {
   min-height: 100vh;
   background: var(--pageBg);
@@ -276,6 +280,47 @@ h2 {
   accent-color: var(--accentColor);
 }
 
+.live-tools,
+.manual-widgets {
+  margin-top: 22px;
+}
+
+.live-tools .field-label,
+.manual-widgets .field-label {
+  margin-top: 0;
+}
+
+.helper-text {
+  margin: 8px 0 0;
+  color: var(--mutedText);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.mini-label {
+  display: block;
+  margin: 12px 0 6px;
+  color: var(--mutedText);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.goal-input-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.goal-input-row .mini-label {
+  margin: 0;
+}
+
+.goal-input-row .text-input {
+  min-height: 40px;
+}
+
 .button-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -455,6 +500,26 @@ h2 {
   font-size: 1.4rem;
   font-weight: 800;
   text-transform: uppercase;
+  overflow: hidden;
+}
+
+.webcam-frame video {
+  position: absolute;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.webcam-frame video.is-live {
+  display: block;
+}
+
+.webcam-frame span {
+  position: relative;
+  z-index: 1;
 }
 
 .recent-follower {
@@ -529,6 +594,11 @@ h2 {
   margin: 10px 0 0;
   color: rgba(255, 255, 255, 0.84);
   font-size: 1.05rem;
+}
+
+.chat-messages {
+  display: grid;
+  gap: 2px;
 }
 
 .chat-box strong {
@@ -818,6 +888,11 @@ h2 {
 #colorValueText,
 .toggle-row {
   color: #c7d0dc;
+}
+
+.helper-text,
+.mini-label {
+  color: #9da8b8;
 }
 
 .section-heading-row {
